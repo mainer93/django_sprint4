@@ -62,7 +62,8 @@ class Post(BaseModel):
                                               ' в будущем — можно делать'
                                               ' отложенные публикации.')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
-                               verbose_name='Автор публикации')
+                               verbose_name='Автор публикации',
+                               related_name='post_set')
     location = models.ForeignKey(Location, on_delete=models.SET_NULL,
                                  null=True, blank=True,
                                  verbose_name='Местоположение')

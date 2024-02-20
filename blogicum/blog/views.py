@@ -19,29 +19,28 @@ class FilterMixin:
             category__is_published=True,
             is_published=True,
             pub_date__lte=timezone.now()
-        ).order_by('-pub_date')
+        )
 
     def annotated_posts(self, queryset):
         return queryset.annotate(
-            comment_count=Count('comments'))
+            comment_count=Count('comments')).order_by('-pub_date')
 
 
 class ProfileView(ListView, FilterMixin):
     model = Post
     paginate_by = Constants.PAGINATION
     template_name = 'blog/profile.html'
+    author = None
 
     def get_queryset(self):
-        author = get_object_or_404(User, username=self.kwargs['username'])
-        return self.annotated_posts(
-            author.post_set.all()).order_by('-pub_date')
+        self.author = get_object_or_404(User, username=self.kwargs['username'])
+        return self.annotated_posts(self.author.poles)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(
-            User, username=self.kwargs['username'])
+        context['profile'] = self.author
         context['form'] = CommentForm()
-        context['comments'] = self.get_queryset().select_related('author')
+        context['post'] = self.get_queryset().select_related('author')
         return context
 
 

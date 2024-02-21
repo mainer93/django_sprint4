@@ -34,13 +34,12 @@ class ProfileView(ListView, FilterMixin):
 
     def get_queryset(self):
         self.author = get_object_or_404(User, username=self.kwargs['username'])
-        return self.annotated_posts(self.author.poles)
+        return self.annotated_posts(self.author.publications)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['profile'] = self.author
         context['form'] = CommentForm()
-        context['post'] = self.get_queryset().select_related('author')
         return context
 
 
